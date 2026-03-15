@@ -758,7 +758,8 @@ function buildSection(title, items, type, containerId) {
     const a = document.createElement('a');
     a.className = 'card';
     a.href = '#';
-    a.onclick = (e) => { e.preventDefault(); openModal(item.id, type); };
+    const itemType = type || item.media_type || 'movie';
+    a.onclick = (e) => { e.preventDefault(); openModal(item.id, itemType); };
     const backdrop = item.backdrop_path ? `${IMG}/w780${item.backdrop_path}` : '';
     const name = item.title || item.name || '';
     const year = (item.release_date || item.first_air_date || '').slice(0, 4);
