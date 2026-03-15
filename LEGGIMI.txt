@@ -1,0 +1,89 @@
+# 🎬 MyStream — Guida alla configurazione
+
+## File del sito
+- `index.html`  → pagina di login
+- `home.html`   → catalogo principale
+- `watch.html`  → player video
+
+---
+
+## 1. Ottieni la chiave TMDB (gratuita)
+
+1. Vai su https://www.themoviedb.org/
+2. Registrati (gratis)
+3. Vai su Impostazioni → API → Richiedi chiave API
+4. Copia la tua **API Key (v3 auth)**
+
+---
+
+## 2. Inserisci la chiave TMDB
+
+Apri **`home.html`** e **`watch.html`** e cerca questa riga (presente in entrambi i file):
+
+```javascript
+const TMDB_KEY = 'TUA_CHIAVE_TMDB_QUI';
+```
+
+Sostituisci `TUA_CHIAVE_TMDB_QUI` con la tua chiave reale. Esempio:
+
+```javascript
+const TMDB_KEY = 'abc123def456...';
+```
+
+---
+
+## 3. Modifica username e password degli utenti
+
+Apri **`index.html`** e trova questa sezione:
+
+```javascript
+const USERS = {
+  "alice":   "pass123",
+  "marco":   "pass456",
+  "giulia":  "pass789",
+  ...
+};
+```
+
+Cambia username e password a piacere. Ci sono già 10 account predefiniti.
+
+---
+
+## 4. Carica sul server
+
+Copia i 3 file nella cartella pubblica del tuo server:
+```
+index.html
+home.html
+watch.html
+```
+
+Non serve nessun backend, PHP, database o configurazione speciale.
+Il sito funziona con qualsiasi server che serva file statici.
+
+---
+
+## Come funziona il "Riprendi a guardare"
+
+- Ogni utente ha la propria cronologia separata, salvata nel browser (localStorage).
+- La cronologia è legata all'username con cui si fa login.
+- Se si usa lo stesso dispositivo con utenti diversi, le cronologie rimangono separate.
+- La cronologia si cancella se si svuota la cache del browser.
+
+---
+
+## Note sulla sicurezza
+
+⚠️ Le password sono nel codice sorgente JavaScript, quindi **visibili** a chi apre "Ispeziona elemento".
+Per un gruppo di 10 amici fidati va benissimo. Se vuoi sicurezza vera servirebbero un backend.
+
+---
+
+## Fonti video disponibili
+
+Il player offre 3 fonti selezionabili:
+1. **VixSrc** — vixsrc.to (principale)
+2. **Fonte 2** — vidsrc.to
+3. **Fonte 3** — smashystream
+
+Se una fonte non funziona, prova le altre.
