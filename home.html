@@ -159,7 +159,7 @@
     line-height: 1.6;
     margin-bottom: 22px;
     display: -webkit-box;
-    /* -webkit-line-clamp: 3; */
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -721,17 +721,6 @@ function addToHistory(item) {
 // ── Hero data ──
 let heroItem = null;
 
-// ── API helpers ──
-async function tmdb(path, params = {}) {
-  const url = new URL(`${TMDB}${path}`);
-  url.searchParams.set('api_key', TMDB_KEY);
-  url.searchParams.set('language', 'it-IT');
-  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
-  const r = await fetch(url.toString());
-  if (!r.ok) throw new Error('TMDB error');
-  return r.json();
-}
-
 // ── Build slider section ──
 function buildSection(title, items, type, containerId) {
   const container = document.getElementById(containerId || 'sliders-container');
@@ -1015,70 +1004,92 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
+// ── Lingua ──
+const LANGS = { 'it-IT': '🇮🇹 Italiano', 'en-US': '🇬🇧 English', 'fr-FR': '🇫🇷 Français', 'es-ES': '🇪🇸 Español', 'de-DE': '🇩🇪 Deutsch' };
+let currentLang = localStorage.getItem(storageKey('lang')) || 'it-IT';
+
+function buildLangSelector() {
+  const area = document.querySelector('.user-area');
+  const sel = document.createElement('select');
+  sel.style.cssText = 'background:rgba(255,255,255,0.07);border:1px solid #333;border-radius:6px;color:#e5e5e5;font-family:DM Sans,sans-serif;font-size:0.78rem;padding:5px 10px;cursor:pointer;outline:none;';
+  Object.entries(LANGS).forEach(([code, label]) => {
+    const opt = document.createElement('option');
+    opt.value = code; opt.textContent = label;
+    if (code === currentLang) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  sel.onchange = () => {
+    currentLang = sel.value;
+    localStorage.setItem(storageKey('lang'), currentLang);
+    document.getElementById('sliders-container').innerHTML = '';
+    document.getElementById('cw-section').style.display = 'none';
+    init();
+  };
+  area.insertBefore(sel, area.firstChild);
+}
+
+// Override tmdb per usare lingua corrente
+async function tmdb(path, params = {}) {
+  const url = new URL(`${TMDB}${path}`);
+  url.searchParams.set('api_key', TMDB_KEY);
+  url.searchParams.set('language', currentLang);
+  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+  const r = await fetch(url.toString());
+  if (!r.ok) throw new Error(`TMDB error ${r.status}`);
+  return r.json();
+}
+
 // ── INIT ──
 async function init() {
   renderContinueWatching();
 
+  // Film popolari
   try {
-    // Film popolari
     const movPop = await tmdb('/movie/popular');
     const movies = movPop.results || [];
-
-    // Imposta hero con il primo film
     if (movies[0]) setHero(movies[0], 'movie');
+    if (movies.length) buildSection('🎬 Film più popolari', movies.slice(0, 20), 'movie');
+  } catch(e) { console.warn('Film popolari:', e); }
 
-    buildSection('🎬 Film più popolari', movies.slice(0, 20), 'movie');
-
-    // Serie popolari
+  // Serie popolari
+  try {
     const tvPop = await tmdb('/tv/popular');
     const series = tvPop.results || [];
-    buildSection('📺 Serie TV più popolari', series.slice(0, 20), 'tv');
+    if (series.length) buildSection('📺 Serie TV più popolari', series.slice(0, 20), 'tv');
+  } catch(e) { console.warn('Serie popolari:', e); }
 
-    // Trending
+  // Trending
+  try {
     const trend = await tmdb('/trending/all/week');
-    buildSection('🔥 Trending questa settimana', (trend.results || []).slice(0, 20), null);
+    const items = (trend.results || []).filter(i => i.media_type !== 'person');
+    if (items.length) buildSection('🔥 Trending questa settimana', items.slice(0, 20), null);
+  } catch(e) { console.warn('Trending:', e); }
 
-    // Top rated movies
+  // Top rated film
+  try {
     const topM = await tmdb('/movie/top_rated');
-    buildSection('⭐ Film più apprezzati', (topM.results || []).slice(0, 20), 'movie');
+    if (topM.results?.length) buildSection('⭐ Film più apprezzati', topM.results.slice(0, 20), 'movie');
+  } catch(e) { console.warn('Top film:', e); }
 
-    // Top rated TV
+  // Top rated TV
+  try {
     const topTV = await tmdb('/tv/top_rated');
-    buildSection('⭐ Serie TV più apprezzate', (topTV.results || []).slice(0, 20), 'tv');
+    if (topTV.results?.length) buildSection('⭐ Serie TV più apprezzate', topTV.results.slice(0, 20), 'tv');
+  } catch(e) { console.warn('Top TV:', e); }
 
-    // Generi
+  // Generi film
+  try {
     const genres = await tmdb('/genre/movie/list');
     for (const genre of (genres.genres || []).slice(0, 4)) {
-      const gMovies = await tmdb('/discover/movie', { with_genres: genre.id, sort_by: 'popularity.desc' });
-      buildSection(`🎭 ${genre.name}`, (gMovies.results || []).slice(0, 20), 'movie');
+      try {
+        const gMovies = await tmdb('/discover/movie', { with_genres: genre.id, sort_by: 'popularity.desc' });
+        if (gMovies.results?.length) buildSection(`🎭 ${genre.name}`, gMovies.results.slice(0, 20), 'movie');
+      } catch(e) { console.warn('Genere', genre.name, e); }
     }
-
-  } catch(e) {
-    console.error('Init error:', e);
-    document.getElementById('sliders-container').innerHTML = `
-      <div class="empty" style="padding:40px;text-align:center">
-        <p style="font-size:1rem;margin-bottom:8px">⚠️ Impossibile caricare i contenuti.</p>
-        <p style="font-size:0.8rem;color:#555">Controlla che la chiave TMDB sia corretta in home.html</p>
-      </div>`;
-  }
+  } catch(e) { console.warn('Generi:', e); }
 }
 
-// Trending slider tratta media_type dinamicamente
-const _origBuildSection = buildSection;
-function buildSection(title, items, type, containerId) {
-  _origBuildSection(title, items.map(i => ({
-    ...i,
-    _type: type || i.media_type || 'movie'
-  })).map(i => i), type, containerId);
-}
-
-// Fix card click per trending (media_type misto)
-document.addEventListener('click', e => {
-  const card = e.target.closest('.card');
-  if (!card) return;
-  // già gestito via onclick nel builder
-});
-
+buildLangSelector();
 init();
 </script>
 </body>
