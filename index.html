@@ -181,6 +181,10 @@
       <input type="password" id="p" placeholder="••••••••" autocomplete="current-password">
     </div>
     <button class="btn" onclick="doLogin()">Entra &rarr;</button>
+<label style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:0.8rem;color:#757575;cursor:pointer;">
+  <input type="checkbox" id="remember" style="accent-color:#e50914;width:15px;height:15px;cursor:pointer;">
+  Ricordami su questo dispositivo
+</label>
     <div class="error" id="err">Username o password non corretti.</div>
   </div>
 
@@ -209,10 +213,18 @@ function doLogin() {
   const u = (document.getElementById('u').value || '').trim().toLowerCase();
   const p = document.getElementById('p').value;
   const err = document.getElementById('err');
+  const remember = document.getElementById('remember').checked;
 
   if (USERS[u] !== undefined && USERS[u] === p) {
     sessionStorage.setItem('ms_user', u);
     sessionStorage.setItem('ms_auth', '1');
+    if (remember) {
+      localStorage.setItem('ms_remember_user', u);
+      localStorage.setItem('ms_remember_auth', '1');
+    } else {
+      localStorage.removeItem('ms_remember_user');
+      localStorage.removeItem('ms_remember_auth');
+    }
     window.location.href = 'home.html';
   } else {
     err.style.display = 'block';
@@ -222,6 +234,17 @@ function doLogin() {
     document.getElementById('p').value = '';
     document.getElementById('p').focus();
   }
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+// Già loggato con sessionStorage o localStorage?
+if (sessionStorage.getItem('ms_auth') === '1') {
+  location.href = 'home.html';
+} else if (localStorage.getItem('ms_remember_auth') === '1') {
+  sessionStorage.setItem('ms_auth', '1');
+  sessionStorage.setItem('ms_user', localStorage.getItem('ms_remember_user'));
+  location.href = 'home.html';
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });

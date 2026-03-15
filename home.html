@@ -252,8 +252,8 @@
 
   /* ── CARD ── */
   .card {
-    flex: 0 0 200px;
-    height: 112px;
+    flex: 0 0 300px;
+    height: 180px;
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
@@ -317,8 +317,8 @@
 
   /* ── CONTINUE WATCHING CARD ── */
   .cw-card {
-    flex: 0 0 220px;
-    height: 130px;
+    flex: 0 0 300px;
+    height: 180px;
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
@@ -714,6 +714,7 @@ function addToHistory(item) {
   let h = getHistory();
   h = h.filter(x => !(x.id === item.id && x.type === item.type && x.season === item.season && x.episode === item.episode));
   h.unshift({ ...item, ts: Date.now() });
+  h = h.filter((x, i, arr) => arr.findIndex(y => y.id === x.id && y.type === x.type && y.season === x.season && y.episode === x.episode) === i);
   if (h.length > 30) h = h.slice(0, 30);
   saveHistory(h);
 }
@@ -833,10 +834,6 @@ async function openModal(id, type) {
           <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           Guarda il film
         </a>`;
-      // Save to history when clicked
-      document.getElementById('modal-actions').querySelector('a').onclick = () => {
-        addToHistory({ id, type: 'movie', title, backdrop, ts: Date.now() });
-      };
     } else {
       // TV — carica stagioni
       const seasons = (d.seasons || []).filter(s => s.season_number > 0);
@@ -889,15 +886,10 @@ async function loadEpisodes(seasonNum) {
         <span class="ep-num">${ep.episode_number}</span>
         <span class="ep-name">${ep.name}</span>
         ${isWatched ? '<span class="ep-check">✓</span>' : ''}`;
-      a.onclick = () => {
+     a.onclick = () => {
         const w = getWatched();
         w[epKey] = true;
         saveWatched(w);
-        addToHistory({
-          id: currentModalId, type: 'tv',
-          title, season: parseInt(seasonNum), episode: ep.episode_number,
-          epname: ep.name, backdrop, ts: Date.now()
-        });
       };
       grid.appendChild(a);
     });

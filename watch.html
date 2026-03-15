@@ -52,10 +52,7 @@
     text-shadow: 0 0 15px rgba(229,9,20,0.4);
     flex-shrink: 0;
   }
-  .now-playing {
-    flex: 1;
-    overflow: hidden;
-  }
+  .now-playing { flex: 1; overflow: hidden; }
   .now-playing-title {
     font-weight: 500;
     font-size: 0.92rem;
@@ -63,52 +60,17 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .now-playing-sub {
-    font-size: 0.73rem;
-    color: var(--muted);
-    margin-top: 1px;
-  }
+  .now-playing-sub { font-size: 0.73rem; color: var(--muted); margin-top: 1px; }
 
-  .wrap {
-    padding-top: var(--header-h);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+  .wrap { padding-top: var(--header-h); min-height: 100vh; display: flex; flex-direction: column; }
 
-  /* Player */
-  .player-section {
-    background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .player-inner {
-    width: 100%;
-    max-width: 1200px;
-    aspect-ratio: 16/9;
-    position: relative;
-    background: #000;
-  }
-  .player-inner iframe {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-  }
+  .player-section { background: #000; display: flex; align-items: center; justify-content: center; }
+  .player-inner { width: 100%; max-width: 1200px; aspect-ratio: 16/9; position: relative; background: #000; }
+  .player-inner iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: block; }
   .player-loading {
-    position: absolute;
-    inset: 0;
-    background: #000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    z-index: 5;
-    pointer-events: none;
+    position: absolute; inset: 0; background: #000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; z-index: 5; pointer-events: none;
   }
   .spinner {
     width: 40px; height: 40px;
@@ -120,130 +82,44 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   .player-loading p { font-size: 0.82rem; color: var(--muted); }
 
-  /* Info + Episodes */
-  .content-section {
-    padding: 28px 24px 60px;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .media-info {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 32px;
-    align-items: flex-start;
-  }
-  .media-poster {
-    width: 100px;
-    flex-shrink: 0;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-  }
+  .content-section { padding: 28px 24px 60px; max-width: 1200px; margin: 0 auto; width: 100%; }
+  .media-info { display: flex; gap: 20px; margin-bottom: 32px; align-items: flex-start; }
+  .media-poster { width: 100px; flex-shrink: 0; border-radius: 8px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
   .media-poster img { width: 100%; display: block; }
   .media-details { flex: 1; }
-  .media-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2rem;
-    letter-spacing: 1.5px;
-    margin-bottom: 6px;
-  }
-  .media-meta {
-    font-size: 0.8rem;
-    color: var(--muted);
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-    align-items: center;
-  }
+  .media-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 1.5px; margin-bottom: 6px; }
+  .media-meta { font-size: 0.8rem; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
   .media-rating { color: #f5c518; font-weight: 500; }
-  .media-desc {
-    font-size: 0.87rem;
-    color: #aaa;
-    line-height: 1.65;
-    max-width: 640px;
-  }
+  .media-desc { font-size: 0.87rem; color: #aaa; line-height: 1.65; max-width: 640px; }
 
-  /* Source selector */
-  .source-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
-  }
-  .source-label {
-    font-size: 0.72rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
+  .source-row { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; flex-wrap: wrap; }
+  .source-label { font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
   .source-btn {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 6px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.8rem;
-    padding: 6px 14px;
-    cursor: pointer;
-    transition: all 0.2s;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px; color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; padding: 6px 14px; cursor: pointer; transition: all 0.2s;
   }
-  .source-btn.active, .source-btn:hover {
-    background: var(--red);
-    border-color: var(--red);
-    color: #fff;
-  }
+  .source-btn.active, .source-btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
 
-  /* Episodes (for TV) */
   .episodes-section { display: none; }
-  .ep-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-  }
-  .ep-header-title {
-    font-weight: 500;
-    font-size: 1rem;
-  }
+  .ep-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+  .ep-header-title { font-weight: 500; font-size: 1rem; }
   .season-select {
-    background: rgba(255,255,255,0.07);
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    padding: 8px 12px;
-    outline: none;
-    cursor: pointer;
+    background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 7px;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+    padding: 8px 12px; outline: none; cursor: pointer;
   }
   .season-select:focus { border-color: var(--red); }
   .episodes-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 8px;
-    max-height: 420px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #333 transparent;
-    padding-right: 4px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 8px; max-height: 420px; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: #333 transparent; padding-right: 4px;
   }
   .ep-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 14px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-    text-decoration: none;
-    color: var(--text);
+    display: flex; align-items: center; gap: 12px; padding: 11px 14px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    text-decoration: none; color: var(--text);
   }
   .ep-item:hover { background: rgba(229,9,20,0.1); border-color: rgba(229,9,20,0.25); }
   .ep-item.current { background: rgba(229,9,20,0.18); border-color: var(--red); }
@@ -253,7 +129,6 @@
   .ep-icon { font-size: 0.8rem; }
 
   @media (max-width: 640px) {
-    .player-inner { aspect-ratio: 16/9; }
     .content-section { padding: 18px 14px 50px; }
     .media-poster { width: 70px; }
     .media-title { font-size: 1.5rem; }
@@ -276,7 +151,6 @@
 </header>
 
 <div class="wrap">
-  <!-- PLAYER -->
   <div class="player-section">
     <div class="player-inner">
       <div class="player-loading" id="player-loading">
@@ -287,7 +161,6 @@
     </div>
   </div>
 
-  <!-- INFO -->
   <div class="content-section">
     <div class="media-info">
       <div class="media-poster" id="media-poster" style="display:none">
@@ -300,7 +173,6 @@
       </div>
     </div>
 
-    <!-- Source selector -->
     <div class="source-row">
       <span class="source-label">Fonte video:</span>
       <button class="source-btn active" onclick="switchSource(0, this)">VixSrc</button>
@@ -308,7 +180,6 @@
       <button class="source-btn" onclick="switchSource(2, this)">Fonte 3</button>
     </div>
 
-    <!-- EPISODI (solo per TV) -->
     <div class="episodes-section" id="episodes-section">
       <div class="ep-header">
         <span class="ep-header-title">Episodi</span>
@@ -320,11 +191,9 @@
 </div>
 
 <script>
-// Auth
 if (sessionStorage.getItem('ms_auth') !== '1') location.href = 'index.html';
 const currentUser = sessionStorage.getItem('ms_user') || 'utente';
 
-// ── Storage ──
 function sk(k) { return `ms_${currentUser}_${k}`; }
 function getWatched() { return JSON.parse(localStorage.getItem(sk('watched')) || '{}'); }
 function saveWatched(w) { localStorage.setItem(sk('watched'), JSON.stringify(w)); }
@@ -333,7 +202,7 @@ function saveHistory(h) { localStorage.setItem(sk('history'), JSON.stringify(h))
 
 function addToHistory(item) {
   let h = getHistory();
-  h = h.filter(x => !(x.id === item.id && x.type === item.type && x.season === item.season && x.episode === item.episode));
+  h = h.filter(x => !(x.id === item.id && x.type === item.type));
   h.unshift({ ...item, ts: Date.now() });
   if (h.length > 30) h = h.slice(0, 30);
   saveHistory(h);
@@ -345,25 +214,25 @@ function markWatched(key) {
   saveWatched(w);
 }
 
-// ── URL Params ──
 const params = new URLSearchParams(location.search);
 const mediaType = params.get('type') || 'movie';
 const tmdbId    = params.get('id') || '';
+if (!tmdbId) { location.href = 'home.html'; }
 const season    = parseInt(params.get('s') || '1');
 const episode   = parseInt(params.get('e') || '1');
 const titleP    = params.get('title') || '';
 const epnameP   = params.get('epname') || '';
-const TMDB_KEY  = '68206e948d6ca8853d8565cbfec26075'; // stessa chiave di home.html
+const TMDB_KEY  = '68206e948d6ca8853d8565cbfec26075';
 const TMDB      = 'https://api.themoviedb.org/3';
 const IMG       = 'https://image.tmdb.org/t/p';
 
-let currentSeason  = season;
-let currentEpisode = episode;
-let currentSource  = 0;
+let currentSeason    = season;
+let currentEpisode   = episode;
+let currentSource    = 0;
 let episodesBySeason = {};
-let mediaData = null;
+let mediaData        = null;
+let historySaved     = false;
 
-// Sorgenti video
 function getEmbedUrl(src, type, id, s, e) {
   if (src === 0) return type === 'movie' ? `https://vixsrc.to/movie/${id}` : `https://vixsrc.to/tv/${id}/${s}/${e}`;
   if (src === 1) return type === 'movie' ? `https://vidsrc.to/embed/movie/${id}` : `https://vidsrc.to/embed/tv/${id}/${s}/${e}`;
@@ -371,7 +240,6 @@ function getEmbedUrl(src, type, id, s, e) {
   return '';
 }
 
-// ── Player ──
 function loadPlayer() {
   const url = getEmbedUrl(currentSource, mediaType, tmdbId, currentSeason, currentEpisode);
   const frame = document.getElementById('player-frame');
@@ -381,7 +249,6 @@ function loadPlayer() {
   setTimeout(() => {
     frame.src = url;
     frame.onload = () => { loading.style.display = 'none'; };
-    // Fallback hide loading after 5s
     setTimeout(() => { loading.style.display = 'none'; }, 5000);
   }, 300);
 }
@@ -393,7 +260,6 @@ function switchSource(idx, btn) {
   loadPlayer();
 }
 
-// ── Header titles ──
 function updateHeader() {
   document.getElementById('np-title').textContent = titleP || '—';
   if (mediaType === 'tv') {
@@ -404,7 +270,6 @@ function updateHeader() {
   document.title = `${titleP || 'MyStream'} — MyStream`;
 }
 
-// ── Load media info ──
 async function loadInfo() {
   try {
     const url = new URL(`${TMDB}/${mediaType}/${tmdbId}`);
@@ -414,12 +279,12 @@ async function loadInfo() {
     if (!r.ok) return;
     mediaData = await r.json();
 
-    const title = mediaData.title || mediaData.name || titleP;
-    const year  = (mediaData.release_date || mediaData.first_air_date || '').slice(0, 4);
+    const title  = mediaData.title || mediaData.name || titleP;
+    const year   = (mediaData.release_date || mediaData.first_air_date || '').slice(0, 4);
     const rating = mediaData.vote_average ? mediaData.vote_average.toFixed(1) : '—';
     const poster = mediaData.poster_path ? `${IMG}/w342${mediaData.poster_path}` : '';
     const desc   = mediaData.overview || '';
-    const genres = (mediaData.genres || []).slice(0,3).map(g => g.name).join(' · ');
+    const genres = (mediaData.genres || []).slice(0, 3).map(g => g.name).join(' · ');
 
     document.getElementById('media-title').textContent = title;
     document.getElementById('media-meta').innerHTML = `
@@ -436,24 +301,23 @@ async function loadInfo() {
       document.getElementById('media-poster-img').src = poster;
     }
 
-    // History + watched
     const histBackdrop = mediaData.backdrop_path ? `${IMG}/w780${mediaData.backdrop_path}` : '';
-    const histItem = {
-      id: tmdbId, type: mediaType, title,
-      backdrop: histBackdrop,
-      season: mediaType === 'tv' ? currentSeason : undefined,
-      episode: mediaType === 'tv' ? currentEpisode : undefined,
-      epname: mediaType === 'tv' ? (epnameP || '') : undefined
-    };
-    addToHistory(histItem);
+    if (!historySaved) {
+      historySaved = true;
+      addToHistory({
+        id: tmdbId, type: mediaType, title,
+        backdrop: histBackdrop,
+        season:  mediaType === 'tv' ? currentSeason  : undefined,
+        episode: mediaType === 'tv' ? currentEpisode : undefined,
+        epname:  mediaType === 'tv' ? (epnameP || '') : undefined
+      });
+    }
 
     if (mediaType === 'tv') {
-      const wKey = `tv_${tmdbId}_s${currentSeason}_e${currentEpisode}`;
-      markWatched(wKey);
+      markWatched(`tv_${tmdbId}_s${currentSeason}_e${currentEpisode}`);
       await loadTVSeasons(mediaData);
     } else {
-      const wKey = `movie_${tmdbId}`;
-      markWatched(wKey);
+      markWatched(`movie_${tmdbId}`);
     }
 
   } catch(e) {
@@ -464,10 +328,10 @@ async function loadInfo() {
 async function loadTVSeasons(data) {
   const seasons = (data.seasons || []).filter(s => s.season_number > 0);
   if (!seasons.length) return;
-
   const sel = document.getElementById('season-sel');
-  sel.innerHTML = seasons.map(s => `<option value="${s.season_number}" ${s.season_number === currentSeason ? 'selected' : ''}>Stagione ${s.season_number}</option>`).join('');
-
+  sel.innerHTML = seasons.map(s =>
+    `<option value="${s.season_number}" ${s.season_number === currentSeason ? 'selected' : ''}>Stagione ${s.season_number}</option>`
+  ).join('');
   document.getElementById('episodes-section').style.display = 'block';
   await loadEpisodes(currentSeason);
 }
@@ -476,15 +340,13 @@ async function loadEpisodes(seasonNum) {
   const list = document.getElementById('episodes-list');
   list.innerHTML = '<div style="padding:12px;color:#555;font-size:0.82rem">Caricamento...</div>';
   seasonNum = parseInt(seasonNum);
-
   try {
     if (!episodesBySeason[seasonNum]) {
       const url = new URL(`${TMDB}/tv/${tmdbId}/season/${seasonNum}`);
       url.searchParams.set('api_key', TMDB_KEY);
       url.searchParams.set('language', 'it-IT');
       const r = await fetch(url.toString());
-      const d = await r.json();
-      episodesBySeason[seasonNum] = d.episodes || [];
+      episodesBySeason[seasonNum] = (await r.json()).episodes || [];
     }
     renderEpisodes(seasonNum);
   } catch(e) {
@@ -493,16 +355,16 @@ async function loadEpisodes(seasonNum) {
 }
 
 function renderEpisodes(seasonNum) {
-  const eps = episodesBySeason[seasonNum] || [];
-  const list = document.getElementById('episodes-list');
+  const eps     = episodesBySeason[seasonNum] || [];
+  const list    = document.getElementById('episodes-list');
   const watched = getWatched();
   list.innerHTML = '';
 
   eps.forEach(ep => {
-    const wKey = `tv_${tmdbId}_s${seasonNum}_e${ep.episode_number}`;
+    const wKey      = `tv_${tmdbId}_s${seasonNum}_e${ep.episode_number}`;
     const isCurrent = seasonNum === currentSeason && ep.episode_number === currentEpisode;
     const isWatched = watched[wKey];
-    const title = mediaData ? (mediaData.name || titleP) : titleP;
+    const title     = mediaData ? (mediaData.name || titleP) : titleP;
 
     const a = document.createElement('a');
     a.className = `ep-item${isCurrent ? ' current' : ''}${isWatched && !isCurrent ? ' watched' : ''}`;
@@ -514,7 +376,6 @@ function renderEpisodes(seasonNum) {
     list.appendChild(a);
   });
 
-  // Scroll to current ep
   setTimeout(() => {
     const cur = list.querySelector('.current');
     if (cur) cur.scrollIntoView({ block: 'center', behavior: 'smooth' });
@@ -525,7 +386,6 @@ async function changeSeason(val) {
   await loadEpisodes(parseInt(val));
 }
 
-// ── INIT ──
 updateHeader();
 loadPlayer();
 loadInfo();
