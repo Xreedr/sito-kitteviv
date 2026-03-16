@@ -283,7 +283,7 @@ let mediaData        = null;
 let historySaved     = false;
 
 function getEmbedUrl(src, type, id, s, e) {
-  if (src === 0) return type === 'movie' ? `https://vixsrc.to/movie/${id}` : `https://vixsrc.to/tv/${id}/${s}/${e}`;
+  if (src === 0) return type === 'movie' ? `https://vixsrc.to/movie/${id}?lang=it` : `https://vixsrc.to/tv/${id}/${s}/${e}?lang=it`;
   if (src === 1) return type === 'movie' ? `https://vidsrc.to/embed/movie/${id}` : `https://vidsrc.to/embed/tv/${id}/${s}/${e}`;
   if (src === 2) return type === 'movie' ? `https://embed.smashystream.com/playere.php?tmdb=${id}` : `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}`;
   return '';
@@ -323,7 +323,7 @@ async function loadInfo() {
   try {
     const url = new URL(`${TMDB}/${mediaType}/${tmdbId}`);
     url.searchParams.set('api_key', TMDB_KEY);
-    url.searchParams.set('language', 'it-IT');
+    url.searchParams.set('language', localStorage.getItem(`ms_${currentUser}_lang`) || 'it-IT');
     const r = await fetch(url.toString());
     if (!r.ok) return;
     mediaData = await r.json();
@@ -409,7 +409,7 @@ async function loadEpisodes(seasonNum) {
     if (!episodesBySeason[seasonNum]) {
       const url = new URL(`${TMDB}/tv/${tmdbId}/season/${seasonNum}`);
       url.searchParams.set('api_key', TMDB_KEY);
-      url.searchParams.set('language', 'it-IT');
+      url.searchParams.set('language', localStorage.getItem(`ms_${currentUser}_lang`) || 'it-IT');
       const r = await fetch(url.toString());
       episodesBySeason[seasonNum] = (await r.json()).episodes || [];
     }
