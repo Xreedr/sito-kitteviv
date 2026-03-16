@@ -238,7 +238,7 @@ function doLogin() {
 
 document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
-// Già loggato con sessionStorage o localStorage?
+// Già loggato?
 if (sessionStorage.getItem('ms_auth') === '1') {
   location.href = 'home.html';
 } else if (localStorage.getItem('ms_remember_auth') === '1') {
@@ -246,11 +246,6 @@ if (sessionStorage.getItem('ms_auth') === '1') {
   sessionStorage.setItem('ms_user', localStorage.getItem('ms_remember_user'));
   location.href = 'home.html';
 }
-
-document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-
-// Già loggato? Vai direttamente
-if (sessionStorage.getItem('ms_auth') === '1') location.href = 'home.html';
 </script>
 </body>
 </html>

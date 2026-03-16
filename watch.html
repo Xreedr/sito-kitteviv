@@ -249,7 +249,21 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAhqo2VEhtM4WMYtRSWaDj542aaFvv0Xp8",
+  authDomain: "mystreamkitteviv.firebaseapp.com",
+  projectId: "mystreamkitteviv",
+  storageBucket: "mystreamkitteviv.firebasestorage.app",
+  messagingSenderId: "1088703261672",
+  appId: "1:1088703261672:web:cb2b0ddbda6eb235ba125d"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+
 if (sessionStorage.getItem('ms_auth') !== '1') location.href = 'index.html';
 const currentUser = sessionStorage.getItem('ms_user') || 'utente';
 
@@ -257,7 +271,7 @@ function sk(k) { return `ms_${currentUser}_${k}`; }
 function getWatched() { return JSON.parse(localStorage.getItem(sk('watched')) || '{}'); }
 function saveWatched(w) { localStorage.setItem(sk('watched'), JSON.stringify(w)); }
 function getHistory() { return JSON.parse(localStorage.getItem(sk('history')) || '[]'); }
-function saveHistory(h) { localStorage.setItem(sk('history'), JSON.stringify(h)); }
+function saveHistory(h) { localStorage.setItem(sk('history'), JSON.stringify(h)); fbSaveHistory(h); }
 
 function addToHistory(item) {
   let h = getHistory();
@@ -265,6 +279,13 @@ function addToHistory(item) {
   h.unshift({ ...item, ts: Date.now() });
   if (h.length > 30) h = h.slice(0, 30);
   saveHistory(h);
+}
+
+async function fbSaveHistory(h) {
+  
+  try {
+    await setDoc(doc(db, 'history', currentUser), { items: JSON.stringify(h) });
+  } catch(e) { console.warn('Firebase save error:', e); }
 }
 
 function markWatched(key) {
@@ -466,26 +487,6 @@ function goNextEpisode() {
   const seasons = (mediaData.seasons || []).filter(s => s.season_number > 0);
   const currentSeasonData = episodesBySeason[currentSeason] || [];
   const nextEpNum = currentEpisode + 1;
-
-  if (nextEpNum <= currentSeasonData.length) {
-    // Episodio successivo nella stessa stagione
-    const nextEp = currentSeasonData.find(e => e.episode_number === nextEpNum);
-    const title = mediaData.name || titleP;
-    location.href = `watch.html?type=tv&id=${tmdbId}&s=${currentSeason}&e=${nextEpNum}&title=${encodeURIComponent(title)}&epname=${encodeURIComponent(nextEp?.name || '')}`;
-  } else {
-    // Prima stagione successiva disponibile
-    const nextSeason = seasons.find(s => s.season_number > currentSeason);
-    if (nextSeason) {
-      const title = mediaData.name || titleP;
-      location.href = `watch.html?type=tv&id=${tmdbId}&s=${nextSeason.season_number}&e=1&title=${encodeURIComponent(title)}&epname=`;
-    }
-  }
-}
-function goNextEpisode() {
-  if (!mediaData) return;
-  const seasons = (mediaData.seasons || []).filter(s => s.season_number > 0);
-  const currentSeasonData = episodesBySeason[currentSeason] || [];
-  const nextEpNum = currentEpisode + 1;
   const title = mediaData.name || titleP;
 
   if (nextEpNum <= currentSeasonData.length) {
@@ -498,6 +499,13 @@ function goNextEpisode() {
     }
   }
 }
+
+// Esponi funzioni globali (necessario per type="module")
+window.switchSource = switchSource;
+window.changeSeason = changeSeason;
+window.goNextEpisode = goNextEpisode;
+document.getElementById('next-ep-overlay').onclick = goNextEpisode;
+
 updateHeader();
 loadPlayer();
 loadInfo();
