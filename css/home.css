@@ -329,7 +329,7 @@ main { padding-top: calc(var(--header-h) + 44px + 24px); padding-bottom: 60px; }
   transform: translateZ(0);
 }
 .slider::-webkit-scrollbar { display: none; }
-.arrow { position: absolute; top: 0; bottom: 0; width: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; opacity: 0; transition: opacity 0.2s; border: none; background: transparent; }
+.arrow { position: absolute; top: 0; bottom: 0; width: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 605; opacity: 0; transition: opacity 0.2s; border: none; background: transparent; }
 .slider-wrap:hover .arrow { opacity: 1; }
 .arrow-left { left: 0; background: linear-gradient(to right, rgba(10,10,10,0.95), transparent); }
 .arrow-right { right: 0; background: linear-gradient(to left, rgba(10,10,10,0.95), transparent); }
