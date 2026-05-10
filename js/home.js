@@ -258,7 +258,7 @@ const logoObserver = new IntersectionObserver(async (entries) => {
 }, { rootMargin: '200px' });
 
 // BUILD SECTION
-function buildTop10Section(title, items, type) {
+function buildTop10Section(title, items, type, containerId) {
   const container = document.getElementById('sliders-container');
   const sec = document.createElement('div');
   sec.className = 'section';
@@ -267,13 +267,9 @@ function buildTop10Section(title, items, type) {
       <span class="section-title">${title}</span>
     </div>
     <div class="slider-wrap">
-      <button class="arrow arrow-left" onclick="scrollSlider(this,-1)">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
+      <button class="arrow arrow-left" onclick="scrollSlider(this,-1)"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
       <div class="top10-slider" id="t10-${Math.random().toString(36).slice(2)}"></div>
-      <button class="arrow arrow-right" onclick="scrollSlider(this,1)">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-      </button>
+      <button class="arrow arrow-right" onclick="scrollSlider(this,1)"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
     </div>`;
   container.appendChild(sec);
   const slider = sec.querySelector('.top10-slider');
@@ -364,9 +360,12 @@ function buildSection(title, items, type, containerId) {
   });
 }
 
-function scrollSlider(btn,dir) {
-  const slider=btn.parentElement.querySelector('.slider');
-  slider.scrollBy({left:dir*slider.clientWidth*0.75,behavior:'smooth'});
+function scrollSlider(btn, dir) {
+  const wrap = btn.parentElement;
+  const slider = wrap.querySelector('.slider, .top10-slider');
+  if (!slider) return;
+  const amount = slider.clientWidth * 0.75;
+  slider.scrollBy({ left: dir * amount, behavior: 'smooth' });
 }
 
 let heroItem=null;
