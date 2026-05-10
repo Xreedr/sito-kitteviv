@@ -113,7 +113,7 @@ function updateHeader() {
   } else {
     document.getElementById('np-sub').textContent = 'Film';
   }
-  document.title = `${titleP || 'MyStream'} — MyStream`;
+  document.title = `${titleP || 'Kitteviv'} — Kitteviv`;
 }
 
 async function loadInfo() {

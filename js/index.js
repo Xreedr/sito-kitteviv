@@ -25,7 +25,7 @@ const lang = (navigator.language || 'en').split('-')[0];
 const l = INDEX_LABELS[lang] || INDEX_LABELS['en'];
 
 function applyLoginLang() {
-  document.title = 'MyStream — ' + l.title;
+  document.title = 'Kitteviv — ' + l.title;
   document.querySelector('.tagline').textContent = l.tagline;
   document.querySelector('.card h2').textContent = l.welcome;
   document.querySelectorAll('.field label')[0].textContent = l.username;
