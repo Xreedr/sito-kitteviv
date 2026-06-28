@@ -511,7 +511,7 @@ main { padding-top: calc(var(--header-h) + 44px + 24px); padding-bottom: 60px; }
 /* ── RESPONSIVE PLAYLISTS ── */
 @media (max-width: 640px) {
   .playlists-modal { max-height: 94vh; border-radius: 14px 14px 0 0; align-self: flex-end; margin: 0; max-width: 100%; }
-  .playlists-overlay { align-items: flex-end; padding: 0; }
+  .playlists-overlay { align-items: flex-end; padding: 0 ;margin-top: 300px !important; width: 80vw; margin-left: 10vw; }
   .pl-items-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
   .pl-header { padding: 16px 16px 14px; }
   .pl-body { padding: 14px 16px; }
