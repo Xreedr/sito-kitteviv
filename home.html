@@ -18,6 +18,27 @@
     <input type="text" id="searchInput" placeholder="Search movies and TV shows..." autocomplete="off">
   </div>
   <div class="user-area">
+    <!-- Pulsante per aprire le playlist (header desktop) -->
+    <button class="playlists-toggle-btn" onclick="openPlaylists()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M3 6h18M3 12h12M3 18h7"/>
+      </svg>
+      Liste
+    </button>
+
+<!-- Modale Playlist -->
+<div class="playlists-overlay" id="playlists-overlay" onclick="closePlaylistsOnBg(event)">
+  <div class="playlists-modal" style="margin-top: 400px;" id="playlists-modal">
+    <div class="pl-header">
+      <h2 id="pl-modal-title">Le mie liste</h2>
+      <button class="pl-close" onclick="closePlaylists()">✕</button>
+    </div>
+    <div class="pl-body" id="pl-body"></div>
+  </div>
+</div>
+
+<!-- Mini popover per  scegliere/creare playlist da una card -->
+<div class="pl-picker" id="pl-picker"></div>
     <span class="username-badge" id="usernameDisplay"></span>
     <button class="logout-btn" onclick="logout()">Esci</button>
   </div>

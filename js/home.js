@@ -133,7 +133,9 @@ function buildPopupHTML(d, trailerKey, omdb) {
         <a class="pb pb-play" href="${watchUrl}">
           <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         </a>
-        <button class="pb pb-circle" title="Aggiungi alla lista">＋</button>
+       <button class="pb pb-circle" title="Add to list" 
+  data-pid="${d.id}" data-ptype="${d.type}" data-ptitle="${(d.name||'').replace(/"/g,'')}" data-pposter="${d.backdrop||''}" data-pyear="${d.year||''}"
+  onclick="openPlaylistPickerFromBtn(this)">＋</button>
         <button class="pb pb-info" title="Più info" onclick="openModal(${d.id},'${d.type}')">⌄</button>
       </div>
       <div class="popup-meta">
@@ -1044,3 +1046,265 @@ window.setSection=setSection;
 
 buildLangSelector();
 init();
+
+// ══════════════════════════════════════════════════
+//  PLAYLISTS
+// ══════════════════════════════════════════════════
+function getPlaylists() {
+  return JSON.parse(localStorage.getItem(storageKey('playlists')) || '[]');
+}
+function savePlaylists(pl) {
+  localStorage.setItem(storageKey('playlists'), JSON.stringify(pl));
+  fbSavePlaylists(pl);
+}
+async function fbSavePlaylists(pl) {
+  try { await setDoc(doc(db, 'playlists', currentUser), { items: JSON.stringify(pl) }); }
+  catch(e) { console.warn('Playlist save error:', e); }
+}
+async function fbLoadPlaylists() {
+  try {
+    const snap = await getDoc(doc(db, 'playlists', currentUser));
+    if (snap.exists()) {
+      const remote = JSON.parse(snap.data().items || '[]');
+      localStorage.setItem(storageKey('playlists'), JSON.stringify(remote));
+    }
+  } catch(e) { console.warn('Playlist load error:', e); }
+}
+
+function createPlaylist(name) {
+  name = (name || '').trim();
+  if (!name) return null;
+  const pl = getPlaylists();
+  const newList = { id: 'pl_' + Date.now(), name, items: [], createdAt: Date.now() };
+  pl.unshift(newList);
+  savePlaylists(pl);
+  return newList;
+}
+
+function deletePlaylist(id) {
+  if (!confirm('Eliminare questa lista?')) return;
+  let pl = getPlaylists();
+  pl = pl.filter(p => p.id !== id);
+  savePlaylists(pl);
+  renderPlaylistsList();
+}
+
+function addToPlaylist(playlistId, item) {
+  // item = { id, type, title, poster, year }
+  const pl = getPlaylists();
+  const list = pl.find(p => p.id === playlistId);
+  if (!list) return;
+  const exists = list.items.some(i => i.id === item.id && i.type === item.type);
+  if (exists) {
+    list.items = list.items.filter(i => !(i.id === item.id && i.type === item.type));
+  } else {
+    list.items.unshift({ ...item, addedAt: Date.now() });
+  }
+  savePlaylists(pl);
+}
+
+function isInAnyPlaylist(id, type) {
+  return getPlaylists().some(p => p.items.some(i => i.id === id && i.type === type));
+}
+
+// ── UI: modale principale ──
+let plCurrentView = 'list'; // 'list' | 'detail'
+let plCurrentDetailId = null;
+
+function openPlaylists() {
+  plCurrentView = 'list';
+  document.getElementById('playlists-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderPlaylistsList();
+}
+function closePlaylists() {
+  document.getElementById('playlists-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closePlaylistsOnBg(e) {
+  if (e.target.id === 'playlists-overlay') closePlaylists();
+}
+
+function renderPlaylistsList() {
+  document.getElementById('pl-modal-title').textContent = 'Le mie liste';
+  const body = document.getElementById('pl-body');
+  const pl = getPlaylists();
+
+  let html = `
+    <div class="pl-create-row">
+      <input type="text" id="pl-new-name" placeholder="Nome nuova lista (es. Da vedere weekend)" maxlength="40">
+      <button class="pl-create-btn" onclick="handleCreatePlaylist()">+ Crea</button>
+    </div>`;
+
+  if (!pl.length) {
+    html += `<div class="pl-empty">Non hai ancora nessuna lista. Creane una sopra!</div>`;
+  } else {
+    html += `<div class="pl-list">`;
+    pl.forEach(p => {
+      html += `
+        <div class="pl-item" onclick="openPlaylistDetail('${p.id}')">
+          <div class="pl-icon">🎬</div>
+          <div class="pl-info">
+            <div class="pl-name">${p.name}</div>
+            <div class="pl-count">${p.items.length} titol${p.items.length===1?'o':'i'}</div>
+          </div>
+          <button class="pl-del-btn" onclick="event.stopPropagation();deletePlaylist('${p.id}')">🗑</button>
+        </div>`;
+    });
+    html += `</div>`;
+  }
+  body.innerHTML = html;
+
+  document.getElementById('pl-new-name').addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleCreatePlaylist();
+  });
+}
+
+function handleCreatePlaylist() {
+  const input = document.getElementById('pl-new-name');
+  const newList = createPlaylist(input.value);
+  if (newList) renderPlaylistsList();
+}
+
+function openPlaylistDetail(id) {
+  plCurrentView = 'detail';
+  plCurrentDetailId = id;
+  renderPlaylistDetail();
+}
+
+function renderPlaylistDetail() {
+  const pl = getPlaylists();
+  const list = pl.find(p => p.id === plCurrentDetailId);
+  if (!list) { renderPlaylistsList(); return; }
+
+  document.getElementById('pl-modal-title').textContent = list.name;
+  const body = document.getElementById('pl-body');
+
+  let html = `
+    <div class="pl-detail-header">
+      <button class="pl-back-btn" onclick="renderPlaylistsList()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="pl-detail-title">${list.name}</span>
+    </div>`;
+
+  if (!list.items.length) {
+    html += `<div class="pl-empty">Lista vuota. Aggiungi titoli dal pulsante "＋" sulle card!</div>`;
+  } else {
+    html += `<div class="pl-items-grid">`;
+    list.items.forEach(item => {
+      html += `
+        <div class="pl-item-card" onclick="openModal(${item.id},'${item.type}')">
+          ${item.poster
+            ? `<img src="${item.poster}" alt="${item.title}" loading="lazy">`
+            : `<div style="width:100%;height:100%;background:#1e1e1e;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#555;padding:8px;text-align:center">${item.title}</div>`}
+          <button class="pl-item-remove" onclick="event.stopPropagation();removeFromPlaylistDetail('${item.id}','${item.type}')">✕</button>
+          <div class="pl-item-label">${item.title}</div>
+        </div>`;
+    });
+    html += `</div>`;
+  }
+  body.innerHTML = html;
+}
+
+function removeFromPlaylistDetail(id, type) {
+  const pl = getPlaylists();
+  const list = pl.find(p => p.id === plCurrentDetailId);
+  if (!list) return;
+  list.items = list.items.filter(i => !(i.id == id && i.type === type));
+  savePlaylists(pl);
+  renderPlaylistDetail();
+}
+
+// ── Picker: bottone "＋" su card/popup/modal ──
+function openPlaylistPickerFromBtn(btn) {
+  const item = {
+    id:     parseInt(btn.dataset.pid),
+    type:   btn.dataset.ptype,
+    title:  btn.dataset.ptitle,
+    poster: btn.dataset.pposter,
+    year:   btn.dataset.pyear
+  };
+  openPlaylistPicker(btn, item);
+}
+
+window.openPlaylistPickerFromBtn = openPlaylistPickerFromBtn;
+function openPlaylistPicker(btn, item) {
+  // item = { id, type, title, poster, year }
+  const picker = document.getElementById('pl-picker');
+  const pl = getPlaylists();
+
+  let html = '';
+  if (!pl.length) {
+    html += `<div style="font-size:0.78rem;color:var(--muted);padding:8px 10px;">Nessuna lista. Creane una:</div>`;
+  } else {
+    pl.forEach(p => {
+      const added = p.items.some(i => i.id === item.id && i.type === item.type);
+      html += `
+        <div class="pl-picker-item ${added?'added':''}" onclick="pickerAddToList('${p.id}', ${JSON.stringify(item).replace(/"/g,'&quot;')})">
+          <span>${p.name}</span>
+          <span>${added ? '✓' : '+'}</span>
+        </div>`;
+    });
+  }
+  html += `
+    <div class="pl-picker-new">
+      <input type="text" id="pl-picker-new-name" placeholder="Nuova lista..." maxlength="40">
+      <button onclick="pickerCreateAndAdd(${JSON.stringify(item).replace(/"/g,'&quot;')})">+</button>
+    </div>`;
+
+  picker.innerHTML = html;
+
+  const rect = btn.getBoundingClientRect();
+  const top = rect.bottom + 6;
+  const left = Math.min(rect.left, window.innerWidth - 220);
+  picker.style.position = 'fixed';
+  picker.style.top  = top + 'px';
+  picker.style.left = left + 'px';
+  picker.style.zIndex = '9999';
+  picker.classList.add('open');
+
+  // chiudi cliccando fuori
+  setTimeout(() => {
+    document.addEventListener('click', closePickerOnOutside);
+  }, 0);
+}
+
+function closePickerOnOutside(e) {
+  const picker = document.getElementById('pl-picker');
+  if (!picker.contains(e.target)) {
+    picker.classList.remove('open');
+    document.removeEventListener('click', closePickerOnOutside);
+  }
+}
+
+function pickerAddToList(playlistId, item) {
+  addToPlaylist(playlistId, item);
+  document.getElementById('pl-picker').classList.remove('open');
+  showToast('Aggiornato!');
+}
+
+function pickerCreateAndAdd(item) {
+  const input = document.getElementById('pl-picker-new-name');
+  const newList = createPlaylist(input.value);
+  if (newList) {
+    addToPlaylist(newList.id, item);
+    document.getElementById('pl-picker').classList.remove('open');
+    showToast(`Aggiunto a "${newList.name}"`);
+  }
+}
+
+// Esponi su window
+window.openPlaylists = openPlaylists;
+window.closePlaylists = closePlaylists;
+window.closePlaylistsOnBg = closePlaylistsOnBg;
+window.handleCreatePlaylist = handleCreatePlaylist;
+window.openPlaylistDetail = openPlaylistDetail;
+window.deletePlaylist = deletePlaylist;
+window.removeFromPlaylistDetail = removeFromPlaylistDetail;
+window.openPlaylistPicker = openPlaylistPicker;
+window.pickerAddToList = pickerAddToList;
+window.pickerCreateAndAdd = pickerCreateAndAdd;
+
+// Carica playlist da Firebase all'avvio
+fbLoadPlaylists();
